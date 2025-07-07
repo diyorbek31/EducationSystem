@@ -61,6 +61,13 @@ public class RoleService(
 
         return mapper.Map<RoleForResultDto>(role);
     }
+
+    public async Task<Role> RetrieveByIdForAuthAsync(long id)
+        => await roleRepository.SelectAll()
+            .Include(r => r.Permissions)
+            .FirstOrDefaultAsync(r => r.Id == id) 
+            ?? throw new CustomException(404, "Role is not found for authentication");
+
     public async Task<RoleForResultDto> UpdateAsync(RoleForUpdateDto dto)
     {
         var role = await roleRepository.SelectAll()

@@ -49,6 +49,17 @@ public class UserService : IUserService
         return this.mapper.Map<IEnumerable<UserForResultDto>>(users);
     }
 
+    public async Task<User> RetrieveByEmailAsync(string email)
+    {
+        var user = await userRepository.SelectAll()
+            .FirstOrDefaultAsync(u => u.Email.ToLower() == email.ToLower());
+
+        if (user is null)
+            throw new CustomException(404, "User is not found");
+
+        return user; 
+    }
+
     public async Task<UserForResultDto> RetrieveByIdAsync(long id)
     {
         var user = await this.userRepository.SelectByIdAsync(id);
@@ -58,9 +69,9 @@ public class UserService : IUserService
         return this.mapper.Map<UserForResultDto>(user);
     }
 
-    public async Task<UserForResultDto> UpdateAsync(UserForUpdateDto dto)
+    public async Task<UserForResultDto> UpdateAsync(long id ,UserForUpdateDto dto)
     {
-        var user = await this.userRepository.SelectByIdAsync(dto.Id);
+        var user = await this.userRepository.SelectByIdAsync(id);
         if (user is null)
             throw new CustomException(404, "User is not found");
 

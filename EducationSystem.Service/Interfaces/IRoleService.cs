@@ -1,4 +1,5 @@
-﻿using EducationSystem.Service.DTOs.RoleContracts;
+﻿using EducationSystem.Domain.Authorization;
+using EducationSystem.Service.DTOs.RoleContracts;
 
 namespace EducationSystem.Service.Interfaces;
 
@@ -12,4 +13,5 @@ public interface IRoleService
 
     Task<RoleForResultDto> UpdateAsync(RoleForUpdateDto role);
     Task<bool> RemoveAsync(long roleId);
+    Task<Role> RetrieveByIdForAuthAsync(long id);
 }

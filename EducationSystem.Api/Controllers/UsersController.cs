@@ -1,60 +1,67 @@
-﻿using EducationSystem.Api.Model;
+﻿using EducationSystem.Api.Helpers;
+using EducationSystem.Api.Model;
+using EducationSystem.Domain.Enums;
 using EducationSystem.Service.DTOs.GroupContracts;
 using EducationSystem.Service.DTOs.UserContracts;
 using EducationSystem.Service.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace EducationSystem.Api.Controllers;
 
+[Authorize(AuthenticationSchemes = "Bearer")]
 [ApiController]
 [Route("api/[controller]")]
-public class UsersController : ControllerBase
+public class UsersController(
+    IUserService userService) : ControllerBase
 {
-    private readonly IGroupService userService;
-    public UsersController(IGroupService userService)
-    {
-        this.userService = userService;
-    }
+    [HasPermission(EnumPermission.ViewUser)]
     [HttpGet]
     public async Task<IActionResult> GetAllAsync()
         => Ok(new Response
         {
             StatusCode = 200,
             Message = "Success",
-            Data = await this.userService.RetrieveAllAsync()
+            Data = await userService.RetrieveAllAsync()
         });
 
+    [HasPermission(EnumPermission.ViewUser)]
     [HttpGet("{id}")]
     public async Task<IActionResult> GetAsync(long id)
         => Ok(new Response
         {
             StatusCode = 200,
             Message = "Success",
-            Data = await this.userService.RetrieveByIdAsync(id)
+            Data = await userService.RetrieveByIdAsync(id)
         });
 
+    [HasPermission(EnumPermission.CreateUser)]
     [HttpPost]
-    public async Task<IActionResult> PostAsync(GroupForCreationDto dto)
+    public async Task<IActionResult> PostAsync(UserForCreationDto dto)
         => Ok(new Response
         {
             StatusCode = 200,
             Message = "Success",
-            Data = await this.userService.CreateAsync(dto)
+            Data = await userService.CreateAsync(dto)
         });
+
+    [HasPermission(EnumPermission.DeleteUser)]
     [HttpDelete("{id}")]
     public async Task<IActionResult> DeleteAsync(long id)
         => Ok(new Response
         {
             StatusCode = 200,
             Message = "Success",
-            Data = await this.userService.RemoveAsync(id)
+            Data = await userService.RemoveAsync(id)
         });
-    [HttpPut]
-    public async Task<IActionResult> PutAsync(GroupForUpdateDto dto)
+
+    [HasPermission(EnumPermission.EditUser)]
+    [HttpPut("{id}")]
+    public async Task<IActionResult> PutAsync(long id, UserForUpdateDto dto)
         => Ok(new Response
         {
             StatusCode = 200,
             Message = "Success",
-            Data = await this.userService.UpdateAsync(dto)
+            Data = await userService.UpdateAsync(id, dto)
         });
 }
