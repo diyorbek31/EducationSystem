@@ -25,12 +25,12 @@ public class RoleService(
         {
             Name = dto.Name,
         };
-        foreach(var permissionId in  dto.Permissions)
-        {
-            var permission = new Permission { Id = permissionId };
-            dbContext.Permissions.Add(permission);
-            role.Permissions.Add(permission);
-        }
+        //foreach(var permissionId in  dto.Permissions)
+        //{
+        //    var permission = new Permission { Id = permissionId };
+        //    dbContext.Permissions.Add(permission);
+        //    role.Permissions.Add(permission);
+        //}
         dbContext.Roles.Add(role);  
         await dbContext.SaveChangesAsync();
         return mapper.Map<RoleForResultDto>(role);
@@ -64,14 +64,12 @@ public class RoleService(
 
     public async Task<Role> RetrieveByIdForAuthAsync(long id)
         => await roleRepository.SelectAll()
-            .Include(r => r.Permissions)
             .FirstOrDefaultAsync(r => r.Id == id) 
             ?? throw new CustomException(404, "Role is not found for authentication");
 
     public async Task<RoleForResultDto> UpdateAsync(RoleForUpdateDto dto)
     {
         var role = await roleRepository.SelectAll()
-            .Include(r => r.Permissions)
             .FirstOrDefaultAsync(r => r.Id == dto.Id);
         if (role is null)
             throw new CustomException(404, "Role is not found");
@@ -79,14 +77,14 @@ public class RoleService(
         role.Name = dto.Name;
         role.UpdatedAt = DateTime.Now;
 
-        role.Permissions.Clear();
+        //role.Permissions.Clear();
 
-        foreach (var permissionId in dto.Permissions)
-        {
-            var permission = new Permission { Id = permissionId };
-            dbContext.Attach(permission); // Attach to avoid duplicate insert
-            role.Permissions.Add(permission);
-        }
+        //foreach (var permissionId in dto.Permissions)
+        //{
+        //    var permission = new Permission { Id = permissionId };
+        //    dbContext.Attach(permission); // Attach to avoid duplicate insert
+        //    role.Permissions.Add(permission);
+        //}
 
         dbContext.Roles.Update(role);
         await dbContext.SaveChangesAsync();
