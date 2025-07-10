@@ -1,5 +1,6 @@
 ﻿using EducationSystem.Api.Helpers;
 using EducationSystem.Api.Model;
+using EducationSystem.Domain.Congirations;
 using EducationSystem.Domain.Enums;
 using EducationSystem.Service.DTOs.GroupContracts;
 using EducationSystem.Service.DTOs.UserContracts;
@@ -15,17 +16,17 @@ namespace EducationSystem.Api.Controllers;
 public class UsersController(
     IUserService userService) : ControllerBase
 {
-    [HasPermission(EnumPermission.ViewUser)]
+    //[HasPermission(EnumPermission.ViewUser)]
     [HttpGet]
-    public async Task<IActionResult> GetAllAsync()
+    public async Task<IActionResult> GetAllAsync(PaginationParams @params)
         => Ok(new Response
         {
             StatusCode = 200,
             Message = "Success",
-            Data = await userService.RetrieveAllAsync()
+            Data = await userService.RetrieveAllAsync(@params)
         });
 
-    [HasPermission(EnumPermission.ViewUser)]
+    //[HasPermission(EnumPermission.ViewUser)]
     [HttpGet("{id}")]
     public async Task<IActionResult> GetAsync(long id)
         => Ok(new Response
@@ -35,7 +36,7 @@ public class UsersController(
             Data = await userService.RetrieveByIdAsync(id)
         });
 
-    [HasPermission(EnumPermission.CreateUser)]
+    [AllowAnonymous]
     [HttpPost]
     public async Task<IActionResult> PostAsync(UserForCreationDto dto)
         => Ok(new Response
@@ -45,7 +46,7 @@ public class UsersController(
             Data = await userService.CreateAsync(dto)
         });
 
-    [HasPermission(EnumPermission.DeleteUser)]
+    //[HasPermission(EnumPermission.DeleteUser)]
     [HttpDelete("{id}")]
     public async Task<IActionResult> DeleteAsync(long id)
         => Ok(new Response
@@ -55,7 +56,7 @@ public class UsersController(
             Data = await userService.RemoveAsync(id)
         });
 
-    [HasPermission(EnumPermission.EditUser)]
+    //[HasPermission(EnumPermission.EditUser)]
     [HttpPut("{id}")]
     public async Task<IActionResult> PutAsync(long id, UserForUpdateDto dto)
         => Ok(new Response

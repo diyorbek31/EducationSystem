@@ -1,5 +1,6 @@
 ﻿using EducationSystem.Data.IRepositories;
 using EducationSystem.Data.Repositories;
+using EducationSystem.Service.Integration;
 using EducationSystem.Service.Interfaces;
 using EducationSystem.Service.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -19,6 +20,7 @@ public static class ServiceExtension
         services.AddScoped<IRoleService, RoleService>();    
         services.AddScoped<IPermissionService, PermissionService>();    
         services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
+        services.AddScoped<IEdcomUserService, EdcomUserService>();
     }
     public static void AddJwtService(this IServiceCollection services, IConfiguration configuration)
     {

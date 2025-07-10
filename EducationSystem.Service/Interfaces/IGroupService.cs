@@ -1,4 +1,5 @@
-﻿using EducationSystem.Service.DTOs.GroupContracts;
+﻿using EducationSystem.Domain.Congirations;
+using EducationSystem.Service.DTOs.GroupContracts;
 namespace EducationSystem.Service.Interfaces;
 
 public interface IGroupService
@@ -7,5 +8,5 @@ public interface IGroupService
     public Task<GroupForResultDto> UpdateAsync(GroupForUpdateDto groupForUpdateDto);
     public Task<bool> RemoveAsync(long id);
     public Task<GroupForResultDto> RetrieveByIdAsync(long id);
-    public Task<IEnumerable<GroupForResultDto>> RetrieveAllAsync();
+    public Task<IEnumerable<GroupForResultDto>> RetrieveAllAsync(PaginationParams @params);
 }

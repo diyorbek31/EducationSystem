@@ -1,22 +1,27 @@
 using EducationSystem.Api.Extensions;
+using EducationSystem.Api.Middleware;
 using EducationSystem.Data.DbContexts;
 using EducationSystem.Service.Mappers;
 using Microsoft.EntityFrameworkCore;
+using Serilog;
+using System.Threading.Tasks;
+
 
 namespace EducationSystem.Api
 {
     public class Program
     {
-        public static void Main(string[] args)
+        public static async Task Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
 
             // Add services to the container
             builder.Services.AddControllers();
 
+            // Register the DbContext with PostgreSQL
             builder.Services.AddDbContext<AppDbContext>(options =>
                 options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
-
+            // Register custom services
             builder.Services.AddCustomService();
 
             builder.Services.AddAutoMapper(cfg =>
@@ -24,13 +29,25 @@ namespace EducationSystem.Api
                 cfg.AddProfile<MappingProfile>();
             });
 
+            // Configure JWT authentication
             builder.Services.AddJwtService(builder.Configuration);
 
             builder.Services.AddAuthorization(); 
             builder.Services.AddEndpointsApiExplorer();
-            builder.Services.ConfigureSwagger(); 
+            builder.Services.ConfigureSwagger();
+
+            // Configure Serilog
+            var logger = new LoggerConfiguration()
+                .ReadFrom.Configuration(builder.Configuration)
+                .Enrich.FromLogContext()
+                .WriteTo.Console()
+                .CreateLogger();
+
+            builder.Logging.ClearProviders();
+            builder.Logging.AddSerilog(logger);
 
             var app = builder.Build();
+            await Dependencies.MapEnumsToEntityAsync(app);
 
             // Configure the HTTP request pipeline
             if (app.Environment.IsDevelopment())
@@ -40,7 +57,8 @@ namespace EducationSystem.Api
             }
 
             app.UseHttpsRedirection();
-
+            // Use custom middleware for global exception handling
+            app.UseMiddleware<GlobalExceptionHandler>();
             app.UseAuthentication(); 
             app.UseAuthorization();
 

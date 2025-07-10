@@ -1,9 +1,11 @@
 ﻿using AutoMapper;
 using EducationSystem.Data.IRepositories;
+using EducationSystem.Domain.Congirations;
 using EducationSystem.Domain.Enities;
 using EducationSystem.Service.DTOs.GroupContracts;
 using EducationSystem.Service.DTOs.UserContracts;
 using EducationSystem.Service.Exceptions;
+using EducationSystem.Service.Extentions;
 using EducationSystem.Service.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
@@ -43,9 +45,13 @@ public class GroupService : IGroupService
         return true;
     }
 
-    public async Task<IEnumerable<GroupForResultDto>> RetrieveAllAsync()
+    public async Task<IEnumerable<GroupForResultDto>> RetrieveAllAsync(PaginationParams @params)
     {
-        var groups = await this.groupRepository.SelectAll().ToListAsync();
+        var groups = await this.groupRepository
+            .SelectAll()
+            .AsNoTracking()
+            .ToPagedList(@params)
+            .ToListAsync();
 
         return this.mapper.Map<IEnumerable<GroupForResultDto>>(groups);
     }
