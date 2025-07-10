@@ -1,5 +1,6 @@
 ﻿using EducationSystem.Api.Helpers;
 using EducationSystem.Api.Model;
+using EducationSystem.Domain.Congirations;
 using EducationSystem.Domain.Enums;
 using EducationSystem.Service.DTOs.GroupContracts;
 using EducationSystem.Service.DTOs.RoleContracts;
@@ -17,12 +18,12 @@ public class RolesController(
 {
     //[HasPermission(EnumPermission.ViewRole)]
     [HttpGet]
-    public async Task<IActionResult> GetAllAsync()
+    public async Task<IActionResult> GetAllAsync(PaginationParams @params)
         => Ok(new Response
         {
             StatusCode = 200,
             Message = "Success",
-            Data = await roleService.RetrieveAllAsync()
+            Data = await roleService.RetrieveAllAsync(@params)
         });
 
     //[HasPermission(EnumPermission.ViewRole)]

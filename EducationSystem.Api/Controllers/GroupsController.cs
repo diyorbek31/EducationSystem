@@ -1,5 +1,6 @@
 ﻿using EducationSystem.Api.Helpers;
 using EducationSystem.Api.Model;
+using EducationSystem.Domain.Congirations;
 using EducationSystem.Domain.Enums;
 using EducationSystem.Service.DTOs.GroupContracts;
 using EducationSystem.Service.Interfaces;
@@ -16,12 +17,12 @@ public class GroupsController(
 {
     //[HasPermission(EnumPermission.ViewGroup)]
     [HttpGet]
-    public async Task<IActionResult> GetAllAsync()
+    public async Task<IActionResult> GetAllAsync([FromQuery] PaginationParams @params)
         => Ok(new Response
         {
             StatusCode = 200,
             Message = "Success",
-            Data = await groupService.RetrieveAllAsync()
+            Data = await groupService.RetrieveAllAsync(@params)
         });
 
     //[HasPermission(EnumPermission.ViewGroup)]

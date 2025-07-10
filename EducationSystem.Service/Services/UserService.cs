@@ -1,52 +1,53 @@
 ﻿using AutoMapper;
 using EducationSystem.Data.IRepositories;
+using EducationSystem.Domain.Congirations;
 using EducationSystem.Domain.Enities;
 using EducationSystem.Service.DTOs.UserContracts;
 using EducationSystem.Service.Exceptions;
+using EducationSystem.Service.Extentions;
 using EducationSystem.Service.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
 
 namespace EducationSystem.Service.Services;
-public class UserService : IUserService
+public class UserService (
+    IMapper mapper,
+    IRepository<User> userRepository): IUserService
 {
-    private readonly IMapper mapper;
-    private readonly IRepository<User> userRepository;
-    public UserService(IMapper mapper, IRepository<User> userRepository)
-    {
-        this.mapper = mapper;
-        this.userRepository = userRepository;
-    }
     public async Task<UserForResultDto> CreateAsync(UserForCreationDto dto)
     {
-        var user = await this.userRepository.SelectAll().
+        var user = await userRepository.SelectAll().
             FirstOrDefaultAsync(u => u.FirstName.ToLower() == dto.FirstName.ToLower());
         if (user is not null)
             throw new CustomException(409, "User already exists");
 
-        var mappedUser = this.mapper.Map<User>(dto);
+        var mappedUser = mapper.Map<User>(dto);
         mappedUser.CreatedAt = DateTime.UtcNow;
-        var result = await this.userRepository.InsertAsync(mappedUser);
-        await this.userRepository.SaveChangeAsync();
+        var result = await userRepository.InsertAsync(mappedUser);
+        await userRepository.SaveChangeAsync();
 
-        return this.mapper.Map<UserForResultDto>(result);
+        return mapper.Map<UserForResultDto>(result);
     }
 
     public async Task<bool> RemoveAsync(long id)
     {
-        var user = await this.userRepository.SelectByIdAsync(id);
+        var user = await    userRepository.SelectByIdAsync(id);
         if (user is null)
             throw new CustomException(404, "User is not found");
-        await this.userRepository.DeleteAsync(id);
-        await this.userRepository.SaveChangeAsync();
+        await userRepository.DeleteAsync(id);
+        await userRepository.SaveChangeAsync();
         return true;
     }
 
-    public async Task<IEnumerable<UserForResultDto>> RetrieveAllAsync()
+    public async Task<IEnumerable<UserForResultDto>> RetrieveAllAsync(PaginationParams @params)
     {
-        var users = await this.userRepository.SelectAll().ToListAsync();
+        var users = await userRepository
+            .SelectAll()
+            .AsNoTracking()
+            .ToPagedList(@params)
+            .ToListAsync();
 
-        return this.mapper.Map<IEnumerable<UserForResultDto>>(users);
+        return mapper.Map<IEnumerable<UserForResultDto>>(users);
     }
 
     public async Task<User> RetrieveByEmailAsync(string email)
@@ -62,25 +63,24 @@ public class UserService : IUserService
 
     public async Task<UserForResultDto> RetrieveByIdAsync(long id)
     {
-        var user = await this.userRepository.SelectByIdAsync(id);
+        var user = await userRepository.SelectByIdAsync(id);
         if (user is null)
             throw new CustomException(404, "User is not found");
 
-        return this.mapper.Map<UserForResultDto>(user);
+        return mapper.Map<UserForResultDto>(user);
     }
 
     public async Task<UserForResultDto> UpdateAsync(long id ,UserForUpdateDto dto)
     {
-        var user = await this.userRepository.SelectByIdAsync(id);
+        var user = await userRepository.SelectByIdAsync(id);
         if (user is null)
             throw new CustomException(404, "User is not found");
 
-
-        this.mapper.Map(dto, user);
+        mapper.Map(dto, user);
         user.UpdatedAt = DateTime.Now;
-        await this.userRepository.UpdateAsync(user);
-        await this.userRepository.SaveChangeAsync();
+        await userRepository.UpdateAsync(user);
+        await userRepository.SaveChangeAsync();
 
-        return this.mapper.Map<UserForResultDto>(user);
+        return mapper.Map<UserForResultDto>(user);
     }
 }

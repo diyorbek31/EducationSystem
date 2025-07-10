@@ -2,9 +2,11 @@
 using EducationSystem.Data.DbContexts;
 using EducationSystem.Data.IRepositories;
 using EducationSystem.Domain.Authorization;
+using EducationSystem.Domain.Congirations;
 using EducationSystem.Service.DTOs.GroupContracts;
 using EducationSystem.Service.DTOs.RoleContracts;
 using EducationSystem.Service.Exceptions;
+using EducationSystem.Service.Extentions;
 using EducationSystem.Service.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
@@ -46,9 +48,13 @@ public class RoleService(
         return true;
     }
 
-    public async Task<IEnumerable<RoleForResultDto>> RetrieveAllAsync()
+    public async Task<IEnumerable<RoleForResultDto>> RetrieveAllAsync(PaginationParams @params)
     {
-        var roles = await roleRepository.SelectAll().ToListAsync();
+        var roles = await roleRepository
+            .SelectAll()
+            .AsNoTracking()
+            .ToPagedList(@params)
+            .ToListAsync();
 
         return mapper.Map<IEnumerable<RoleForResultDto>>(roles);
     }
