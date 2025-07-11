@@ -27,12 +27,12 @@ public class RoleService(
         {
             Name = dto.Name,
         };
-        //foreach(var permissionId in  dto.Permissions)
-        //{
-        //    var permission = new Permission { Id = permissionId };
-        //    dbContext.Permissions.Add(permission);
-        //    role.Permissions.Add(permission);
-        //}
+        foreach (var permissionId in dto.Permissions)
+        {
+            var permission = new Permission { Id = permissionId };
+            dbContext.Permissions.Add(permission);
+            role.Permissions.Add(permission);
+        }
         dbContext.Roles.Add(role);  
         await dbContext.SaveChangesAsync();
         return mapper.Map<RoleForResultDto>(role);

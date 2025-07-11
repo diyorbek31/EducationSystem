@@ -33,6 +33,5 @@ public enum EnumPermission
     ViewRole,
     EditRole,
     DeleteRole,
-
 }
  
