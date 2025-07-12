@@ -38,10 +38,12 @@ public static class ServiceExtension
                 ValidateLifetime = true,
                 ValidateIssuerSigningKey = true,
                 ValidIssuer = configuration["Jwt:Issuer"],
-                ValidAudience = configuration["JWT:Audience"],
-                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["Jwt:Key"])),
-                ClockSkew = TimeSpan.Zero
+                ValidAudience = configuration["JWT:Audience"], // Not used, so optional
+                IssuerSigningKey = new SymmetricSecurityKey(
+                    Encoding.UTF8.GetBytes(configuration["Jwt:Key"])),
+                ClockSkew = TimeSpan.Zero // good for precision
             };
+
         });
     }
         /// <summary>

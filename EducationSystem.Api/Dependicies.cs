@@ -26,19 +26,34 @@ public static class Dependencies
     }
 
     private static async Task MapEnumToEntityAsync<TEntity, TEnum>(
-        AppDbContext dbContext,
-        Action<TEntity, string, int> mapAction)
-        where TEntity : class, new()
-        where TEnum : Enum
+    AppDbContext dbContext,
+    Action<TEntity, string, int> mapAction)
+    where TEntity : class, new()
+    where TEnum : Enum
     {
-        var enumValues = Enum.GetValues(typeof(TEnum)).Cast<TEnum>();
+        var enumValues = Enum.GetValues(typeof(TEnum)).Cast<TEnum>().ToList();
+        var dbSet = dbContext.Set<TEntity>();
+
+        // Load existing entities from DB
+        var existingEntities = await dbSet.ToListAsync();
+
         foreach (var enumValue in enumValues)
         {
+            var name = enumValue.ToString();
+            var id = Convert.ToInt32(enumValue);
+
+            // Check if already exists
+            bool exists = existingEntities.Any();
+
+            if (exists)
+                continue; // ✅ Skip duplicates
+
             var entity = new TEntity();
-            mapAction(entity, enumValue.ToString(), Convert.ToInt32(enumValue));
-            dbContext.Set<TEntity>().Add(entity);
+            mapAction(entity, name, id);
+            dbSet.Add(entity);
         }
 
         await dbContext.SaveChangesAsync();
     }
+
 }
