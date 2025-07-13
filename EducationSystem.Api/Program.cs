@@ -4,6 +4,7 @@ using EducationSystem.Api.Middleware;
 using EducationSystem.Data.DbContexts;
 using EducationSystem.Service.Mappers;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 using Serilog;
 using System.Threading.Tasks;
 
@@ -21,7 +22,11 @@ namespace EducationSystem.Api
 
             // Register the DbContext with PostgreSQL
             builder.Services.AddDbContext<AppDbContext>(options =>
-                options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
+            {
+                options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"));
+                options.EnableSensitiveDataLogging();
+            });
+
             // Register custom services
             builder.Services.AddCustomService();
 
@@ -46,6 +51,7 @@ namespace EducationSystem.Api
 
             builder.Logging.ClearProviders();
             builder.Logging.AddSerilog(logger);
+            builder.Services.AddPermissionPolicies();
 
             var app = builder.Build();
             //await Dependencies.MapEnumsToEntityAsync(app);
@@ -62,6 +68,7 @@ namespace EducationSystem.Api
             app.UseMiddleware<GlobalExceptionHandler>();
             app.UseAuthentication(); 
             app.UseAuthorization();
+            
 
             app.MapControllers();
 

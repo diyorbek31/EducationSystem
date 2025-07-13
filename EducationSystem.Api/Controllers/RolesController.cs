@@ -16,7 +16,7 @@ namespace EducationSystem.Api.Controllers;
 public class RolesController(
     IRoleService roleService) : ControllerBase
 {
-    //[HasPermission(EnumPermission.ViewRole)]
+    [HasPermission(EnumPermission.ViewRole)]
     [HttpGet]
     public async Task<IActionResult> GetAllAsync([FromQuery] PaginationParams @params)
         => Ok(new Response
@@ -26,7 +26,7 @@ public class RolesController(
             Data = await roleService.RetrieveAllAsync(@params)
         });
 
-    //[HasPermission(EnumPermission.ViewRole)]
+    [HasPermission(EnumPermission.ViewRole)]
     [HttpGet("{id}")]
     public async Task<IActionResult> GetAsync(long id)
         => Ok(new Response
@@ -46,7 +46,7 @@ public class RolesController(
             Data = await roleService.CreateAsync(dto)
         });
 
-    //[HasPermission(EnumPermission.DeleteRole)]
+    [HasPermission(EnumPermission.DeleteRole)]
     [HttpDelete("{id}")]
     public async Task<IActionResult> DeleteAsync(long id)
         => Ok(new Response
@@ -56,7 +56,7 @@ public class RolesController(
             Data = await roleService.RemoveAsync(id)
         });
 
-    //[HasPermission(EnumPermission.EditRole)]
+    [HasPermission(EnumPermission.EditRole)]
     [HttpPut]
     public async Task<IActionResult> PutAsync(RoleForUpdateDto dto)
         => Ok(new Response

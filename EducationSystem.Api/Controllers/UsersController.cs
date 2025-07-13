@@ -16,7 +16,7 @@ namespace EducationSystem.Api.Controllers;
 public class UsersController(
     IUserService userService) : ControllerBase
 {
-    //[HasPermission(EnumPermission.ViewUser)]
+    [AllowAnonymous]
     [HttpGet]
     public async Task<IActionResult> GetAllAsync([FromQuery] PaginationParams @params)
         => Ok(new Response
@@ -26,7 +26,7 @@ public class UsersController(
             Data = await userService.RetrieveAllAsync(@params)
         });
 
-    //[HasPermission(EnumPermission.ViewUser)]
+    [HasPermission(EnumPermission.ViewUser)]
     [HttpGet("{id}")]
     public async Task<IActionResult> GetAsync(long id)
         => Ok(new Response
@@ -46,7 +46,7 @@ public class UsersController(
             Data = await userService.CreateAsync(dto)
         });
 
-    //[HasPermission(EnumPermission.DeleteUser)]
+    [HasPermission(EnumPermission.DeleteUser)]
     [HttpDelete("{id}")]
     public async Task<IActionResult> DeleteAsync(long id)
         => Ok(new Response
@@ -56,7 +56,7 @@ public class UsersController(
             Data = await userService.RemoveAsync(id)
         });
 
-    //[HasPermission(EnumPermission.EditUser)]
+    [HasPermission(EnumPermission.EditUser)]
     [HttpPut("{id}")]
     public async Task<IActionResult> PutAsync(long id, UserForUpdateDto dto)
         => Ok(new Response

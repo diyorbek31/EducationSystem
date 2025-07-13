@@ -18,6 +18,7 @@ public static class CollectionExtension
         {
             throw new ArgumentOutOfRangeException(nameof(@params.PageSize), "The page size must be greater than or equal to 1.");
         }
+        int skip = (@params.PageIndex - 1) * @params.PageSize;
 
         return source
             .Skip((@params.PageIndex - 1) * @params.PageSize)
