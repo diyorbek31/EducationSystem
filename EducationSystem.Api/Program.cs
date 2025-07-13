@@ -1,4 +1,5 @@
 using EducationSystem.Api.Extensions;
+using EducationSystem.Api.Helpers;
 using EducationSystem.Api.Middleware;
 using EducationSystem.Data.DbContexts;
 using EducationSystem.Service.Mappers;
@@ -47,7 +48,7 @@ namespace EducationSystem.Api
             builder.Logging.AddSerilog(logger);
 
             var app = builder.Build();
-            await Dependencies.MapEnumsToEntityAsync(app);
+            //await Dependencies.MapEnumsToEntityAsync(app);
 
             // Configure the HTTP request pipeline
             if (app.Environment.IsDevelopment())
@@ -63,6 +64,13 @@ namespace EducationSystem.Api
             app.UseAuthorization();
 
             app.MapControllers();
+
+            //for seed data default
+            using (var scope = app.Services.CreateScope())
+            {
+                var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+                await dbContext.SeedAsync();
+            }
 
             app.Run();
         }

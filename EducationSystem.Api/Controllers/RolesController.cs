@@ -18,7 +18,7 @@ public class RolesController(
 {
     //[HasPermission(EnumPermission.ViewRole)]
     [HttpGet]
-    public async Task<IActionResult> GetAllAsync(PaginationParams @params)
+    public async Task<IActionResult> GetAllAsync([FromQuery] PaginationParams @params)
         => Ok(new Response
         {
             StatusCode = 200,

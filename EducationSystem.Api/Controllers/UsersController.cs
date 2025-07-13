@@ -18,7 +18,7 @@ public class UsersController(
 {
     //[HasPermission(EnumPermission.ViewUser)]
     [HttpGet]
-    public async Task<IActionResult> GetAllAsync(PaginationParams @params)
+    public async Task<IActionResult> GetAllAsync([FromQuery] PaginationParams @params)
         => Ok(new Response
         {
             StatusCode = 200,

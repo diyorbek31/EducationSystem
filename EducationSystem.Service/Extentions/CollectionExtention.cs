@@ -5,7 +5,7 @@ using Newtonsoft.Json;
 
 namespace EducationSystem.Service.Extentions;
 
-public static class CollectionExtention
+public static class CollectionExtension
 {
     public static IQueryable<TEntity> ToPagedList<TEntity>(this IQueryable<TEntity> source, PaginationParams @params)
     {
@@ -19,6 +19,9 @@ public static class CollectionExtention
             throw new ArgumentOutOfRangeException(nameof(@params.PageSize), "The page size must be greater than or equal to 1.");
         }
 
-        return source.Take((@params.PageSize * (@params.PageIndex - 1))..(@params.PageSize * (@params.PageIndex - 1) + @params.PageSize));
+        return source
+            .Skip((@params.PageIndex - 1) * @params.PageSize)
+            .Take(@params.PageSize);
     }
 }
+
