@@ -10,6 +10,7 @@ namespace EducationSystem.Api;
 
 public static class Dependencies
 {
+    /*
     public static async Task<WebApplication> MapEnumsToEntityAsync(WebApplication webApplication)
     {
         using var scope = webApplication.Services.CreateScope();
@@ -55,5 +56,5 @@ public static class Dependencies
 
         await dbContext.SaveChangesAsync();
     }
-
+    */
 }

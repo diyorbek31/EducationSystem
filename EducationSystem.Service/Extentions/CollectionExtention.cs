@@ -5,7 +5,7 @@ using Newtonsoft.Json;
 
 namespace EducationSystem.Service.Extentions;
 
-public static class CollectionExtention
+public static class CollectionExtension
 {
     public static IQueryable<TEntity> ToPagedList<TEntity>(this IQueryable<TEntity> source, PaginationParams @params)
     {
@@ -20,6 +20,9 @@ public static class CollectionExtention
         }
         int skip = (@params.PageIndex - 1) * @params.PageSize;
 
-        return source.Skip(skip).Take(@params.PageSize);
+        return source
+            .Skip((@params.PageIndex - 1) * @params.PageSize)
+            .Take(@params.PageSize);
     }
 }
+

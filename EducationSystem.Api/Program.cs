@@ -54,7 +54,7 @@ namespace EducationSystem.Api
             builder.Services.AddPermissionPolicies();
 
             var app = builder.Build();
-            await Dependencies.MapEnumsToEntityAsync(app);
+            //await Dependencies.MapEnumsToEntityAsync(app);
 
             // Configure the HTTP request pipeline
             if (app.Environment.IsDevelopment())
@@ -71,6 +71,13 @@ namespace EducationSystem.Api
             
 
             app.MapControllers();
+
+            //for seed data default
+            using (var scope = app.Services.CreateScope())
+            {
+                var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+                await dbContext.SeedAsync();
+            }
 
             app.Run();
         }

@@ -45,7 +45,7 @@ namespace EducationSystem.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Permissions");
+                    b.ToTable("Permission");
                 });
 
             modelBuilder.Entity("EducationSystem.Domain.Authorization.Role", b =>
@@ -185,25 +185,6 @@ namespace EducationSystem.Data.Migrations
                     b.HasIndex("RolesId");
 
                     b.ToTable("PermissionRole");
-                });
-
-            modelBuilder.Entity("EducationSystem.Domain.Authorization.RolePermission", b =>
-                {
-                    b.HasOne("EducationSystem.Domain.Authorization.Permission", "Permission")
-                        .WithMany()
-                        .HasForeignKey("PermissionId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("EducationSystem.Domain.Authorization.Role", "Role")
-                        .WithMany()
-                        .HasForeignKey("RoleId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Permission");
-
-                    b.Navigation("Role");
                 });
 
             modelBuilder.Entity("EducationSystem.Domain.Enities.User", b =>
