@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace EducationSystem.Api
 {
-    public class Program
+    public partial class Program
     {
         public static async Task Main(string[] args)
         {
@@ -82,4 +82,5 @@ namespace EducationSystem.Api
             app.Run();
         }
     }
+    public partial class Program { }
 }
