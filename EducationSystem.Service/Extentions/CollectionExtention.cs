@@ -9,18 +9,7 @@ public static class CollectionExtension
 {
     public static IQueryable<TEntity> ToPagedList<TEntity>(this IQueryable<TEntity> source, PaginationParams @params)
     {
-        if (@params.PageIndex < 1)
-        {
-            throw new ArgumentOutOfRangeException(nameof(@params.PageIndex), "The page index must be greater than or equal to 1.");
-        }
-
-        if (@params.PageSize < 1)
-        {
-            throw new ArgumentOutOfRangeException(nameof(@params.PageSize), "The page size must be greater than or equal to 1.");
-        }
-        int skip = (@params.PageIndex - 1) * @params.PageSize;
-
-        return source
+         return source
             .Skip((@params.PageIndex - 1) * @params.PageSize)
             .Take(@params.PageSize);
     }

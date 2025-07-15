@@ -51,7 +51,7 @@ namespace EducationSystem.Api
 
             builder.Logging.ClearProviders();
             builder.Logging.AddSerilog(logger);
-            builder.Services.AddPermissionPolicies();
+            //builder.Services.AddPermissionPolicies();
 
             var app = builder.Build();
             //await Dependencies.MapEnumsToEntityAsync(app);
