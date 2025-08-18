@@ -1,32 +1,24 @@
 ﻿using EducationSystem.Domain.Enities;
+using EducationSystem.Service.DTOs.EdcomDto;
+using Newtonsoft.Json;
 using System.Net.Http.Headers;
 using System.Text.Json;
 
 namespace EducationSystem.Service.Integration;
 
-public class EdcomUserService : IEdcomUserService
+public class EdcomUserService : BaseEdcomService, IEdcomUserService
 {
-    public async Task<List<EdcomUser>> GetEdcomUserAsync(string token)
+    public EdcomUserService(IHttpClientFactory factory) : base(factory) { }
+
+    public async Task<List<EdcomUser>> GetEdcomUserAsync()
     {
-        using var client = new HttpClient();
+        await InitializeAsync();
 
-        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+        var response = await _client.GetAsync("/gateway/api-auth/users");
+        response.EnsureSuccessStatusCode();
 
-        var response = await client.GetAsync("https://stage.api.edcom.uz/gateway/api-auth/users");
-        
-        if (!response.IsSuccessStatusCode)
-        {
-            throw new HttpRequestException("Failed to retrieve users from Edcom API.");
-        }
-
-        var content = await response.Content.ReadAsStringAsync();
-
-        var users = JsonSerializer.Deserialize<List<EdcomUser>>(content, new JsonSerializerOptions
-        {
-            PropertyNameCaseInsensitive = true,
-            PropertyNamingPolicy = JsonNamingPolicy.CamelCase
-        });
-
-        return users ?? new List<EdcomUser>();
+        var json = await response.Content.ReadAsStringAsync();
+        var result = JsonConvert.DeserializeObject<EdcomUserResponse>(json)!;
+        return result.Items;
     }
 }

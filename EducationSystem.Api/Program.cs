@@ -27,6 +27,7 @@ namespace EducationSystem.Api
                 options.EnableSensitiveDataLogging();
             });
 
+            builder.Services.AddHttpClient();
             // Register custom services
             builder.Services.AddCustomService();
 

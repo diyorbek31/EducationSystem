@@ -4,5 +4,5 @@ namespace EducationSystem.Service.Integration;
 
 public interface IEdcomUserService
 {
-    public Task<List<EdcomUser>> GetEdcomUserAsync(string token);
+    Task<List<EdcomUser>> GetEdcomUserAsync();
 }

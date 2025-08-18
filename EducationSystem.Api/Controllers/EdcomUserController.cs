@@ -2,45 +2,44 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-namespace EducationSystem.Api.Controllers;
-[Authorize(AuthenticationSchemes = "Bearer")]
-[ApiController]
-[Route("api/[controller]")]
-public class EdcomUserController : ControllerBase
+namespace EducationSystem.Api.Controllers
 {
-    private readonly IEdcomUserService edcomUserService;
-
-    public EdcomUserController(IEdcomUserService edcomUserService)
+    [Authorize(AuthenticationSchemes = "Bearer")]
+    [ApiController]
+    [Route("api/[controller]")]
+    public class EdcomUserController : ControllerBase
     {
-        this.edcomUserService = edcomUserService;
-    }
+        private readonly IEdcomUserService _edcomUserService;
 
-    [HttpGet]
-    public async Task<IActionResult> GetAsync()
-    {
-        var token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9." +
-            "eyJpZCI6IjEiLCJpbm4tb3ItcGluZmwiOiIxMjM0NTY3ODkxMDExMSIsImxhbmciOiJ1eiIsImV4cCI6ODk1MjAzNDUwOSwiaXNzIjoiZGV2LmVkY29tLnV6IiwiYXVkIjoiZGV2LmVkY29tLnV6In0." +
-            "iBAS5O7evnSX7U5rFvwtzuqscmu0c42g9kzRQX4GTPQ";
-        try
+        public EdcomUserController(IEdcomUserService edcomUserService)
         {
-            var users = await edcomUserService.GetEdcomUserAsync(token);
-
-            return Ok(new
-            {
-                StatusCode = 200,
-                Message = "Success",
-                Data = users
-            });
+            _edcomUserService = edcomUserService;
         }
-        catch (Exception ex)
-        {
-            return BadRequest(new
-            {
-                StatusCode = 400,
-                Message = "Error retrieving users from Edcom API.",
-                Error = ex.Message
-            });
+        /// <summary>
+        /// Get all Edcom users
+        /// </summary>
+        /// <returns></returns>
 
+        [HttpGet]
+        public async Task<IActionResult> GetAsync()
+        {
+            try
+            {
+                var users = await _edcomUserService.GetEdcomUserAsync();
+                return Ok(users);
+            }
+            catch (HttpRequestException ex)
+            {
+                // Network / API errors
+                return StatusCode(StatusCodes.Status502BadGateway,
+                    new { message = "Failed to connect to Edcom API", detail = ex.Message });
+            }
+            catch (Exception ex)
+            {
+                // Any other error
+                return StatusCode(StatusCodes.Status500InternalServerError,
+                    new { message = "An error occurred while retrieving users", detail = ex.Message });
+            }
         }
     }
 }
