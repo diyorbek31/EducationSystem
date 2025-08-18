@@ -1,6 +1,8 @@
-﻿namespace EducationSystem.Service.Integration;
+﻿using EducationSystem.Service.DTOs.EdcomDto;
+
+namespace EducationSystem.Service.Integration;
 
 public interface IBaseEdcomService
 {
-    Task InitializeAsync();
+    Task InitializeAsync(LoginRequest request);
 }

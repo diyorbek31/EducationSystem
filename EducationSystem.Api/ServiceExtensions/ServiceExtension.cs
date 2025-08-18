@@ -23,6 +23,7 @@ public static class ServiceExtension
         services.AddScoped<IPermissionService, PermissionService>();    
         services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
         services.AddScoped<IEdcomUserService, EdcomUserService>();
+        services.AddScoped<ICompanyService, CompanyService>();
     }
     public static void AddJwtService(this IServiceCollection services, IConfiguration configuration)
     {
