@@ -1,29 +1,25 @@
-﻿using EducationSystem.Service.DTOs.EdcomDto;
+﻿using EducationSystem.Integration.Requests;
 using Newtonsoft.Json;
-using System.Net.Http;
-using System.Net.Http.Headers;
 using System.Text;
 using System.Text.Json;
 
-namespace EducationSystem.Service.Integration;
+namespace EducationSystem.Integration.BaseIntegration;
 
-public class BaseEdcomService : IBaseEdcomService
+public class BaseIntegrationService : IBaseIntegrationService
 {
     protected readonly HttpClient _client;
     private readonly IHttpClientFactory _factory;
 
-    public BaseEdcomService(IHttpClientFactory factory)
+    public BaseIntegrationService(IHttpClientFactory factory)
     {
         _factory = factory;
-        _client = _factory.CreateClient();
+        _client = new HttpClient();
         _client.BaseAddress = new Uri("https://stage.api.edcom.uz");
     }
 
-    public async Task InitializeAsync(LoginRequest request)
+    public async Task InitiliazeAsync(LoginRequest request)
     {
         var token = await GetAuthTokenAsync(request);
-        _client.DefaultRequestHeaders.Authorization =
-        new AuthenticationHeaderValue("Bearer", token);
     }
 
     private async Task<string> GetAuthTokenAsync(LoginRequest request)
